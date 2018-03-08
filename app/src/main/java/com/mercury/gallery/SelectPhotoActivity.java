@@ -45,9 +45,10 @@ public class SelectPhotoActivity extends AppCompatActivity {
         rvPhoto.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                Log.i(TAG, "onScrollStateChanged: " + newState);
+//                Log.i(TAG, "onScrollStateChanged: " + newState);
             }
         });
+        Log.i(TAG, "maxThread:" + Runtime.getRuntime().availableProcessors());
     }
 
 
