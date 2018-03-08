@@ -22,6 +22,7 @@ public class LoaderTask extends AsyncTask<String, Void, Bitmap> {
     private int                      reqHeight;
 
     public static final String TAG = "LoaderTask";
+    public static int count;
 
     public LoaderTask(ImageView imageView, String path, int reqWidth, int reqHeight) {
         mWeakReference = new WeakReference<ImageView>(imageView);
@@ -51,6 +52,8 @@ public class LoaderTask extends AsyncTask<String, Void, Bitmap> {
     protected void onPostExecute(Bitmap bitmap) {
         ImageView imageView = mWeakReference.get();
         if (imageView != null && path.equals(imageView.getTag())) {
+            count++;
+            Log.i(TAG, "onPostExecute: " + count);
             imageView.setImageBitmap(bitmap);
         }
 

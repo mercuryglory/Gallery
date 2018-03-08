@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,13 @@ public class SelectPhotoActivity extends AppCompatActivity {
         rvPhoto.setLayoutManager(new GridLayoutManager(this, 4));
         rvPhoto.addItemDecoration(new PhotoItemDecoration(5));
         rvPhoto.setAdapter(mImageAdapter);
+
+        rvPhoto.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                Log.i(TAG, "onScrollStateChanged: " + newState);
+            }
+        });
     }
 
 

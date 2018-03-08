@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
@@ -19,6 +21,8 @@ public class ImageLoader {
 
     private LruCache<String, Bitmap> mCache;
 
+    public static final String TAG = "ImageLoader";
+
     public static ImageLoader getInstance() {
         if (sInstance == null) {
             synchronized (ImageLoader.class) {
@@ -32,12 +36,7 @@ public class ImageLoader {
 
     public ImageLoader() {
         int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 8);
-        mCache = new LruCache<String,Bitmap>(maxMemory){
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return 800;
-            }
-        };
+        mCache = new LruCache<String,Bitmap>(maxMemory);
     }
 
     public void addImageToCache(String key, Bitmap bitmap) {
@@ -63,7 +62,9 @@ public class ImageLoader {
         } else {
             imageView.setImageDrawable(new ColorDrawable(Color.parseColor("#E9EBF0")));
             LoaderTask task = new LoaderTask(imageView, path, reqWidth, reqHeight);
-            task.execute(path);
+            Log.i(TAG, "loadImage: " + path);
+//            task.execute(path);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path);
         }
     }
 
