@@ -10,7 +10,15 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +29,7 @@ import java.util.List;
  * @descript
  */
 
-public class SelectPhotoActivity extends AppCompatActivity {
+public class SelectPhotoActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String TAG = "SelectPhotoActivity";
 
@@ -29,6 +37,13 @@ public class SelectPhotoActivity extends AppCompatActivity {
 
     private ImageAdapter mImageAdapter;
     private RecyclerView rvPhoto;
+    private TextView tvFolderCatalog;
+    private Toolbar toolBar;
+
+    private PopupWindow mPopupWindow;
+    private RelativeLayout rlBottom;
+
+    private View rootView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,18 +52,41 @@ public class SelectPhotoActivity extends AppCompatActivity {
         getLoaderManager().initLoader(0, null, mCursorLoader);
         mImageAdapter = new ImageAdapter(this);
 
+        rootView = LayoutInflater.from(this).inflate(R.layout.activity_select_photo, null);
+        rlBottom = findViewById(R.id.rl_bottom);
+
         rvPhoto = findViewById(R.id.rv_photo);
         rvPhoto.setLayoutManager(new GridLayoutManager(this, 4));
         rvPhoto.addItemDecoration(new PhotoItemDecoration(5));
         rvPhoto.setAdapter(mImageAdapter);
 
-        rvPhoto.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                Log.i(TAG, "onScrollStateChanged: " + newState);
-            }
-        });
+        tvFolderCatalog = findViewById(R.id.tv_folder_catalog);
+        toolBar = findViewById(R.id.toolBar);
+        tvFolderCatalog.setOnClickListener(this);
         Log.i(TAG, "maxThread:" + Runtime.getRuntime().availableProcessors());
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_folder_catalog:
+                View view = LayoutInflater.from(this).inflate(R.layout.item_image, null);
+                if (mPopupWindow == null) {
+                    mPopupWindow = new PopupWindow(this);
+                    mPopupWindow.setContentView(view);
+                    mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+                    mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+                    mPopupWindow.setOutsideTouchable(true);
+                }
+                rlBottom.measure(0, 0);
+                int measuredHeight = rlBottom.getMeasuredHeight();
+                mPopupWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, measuredHeight);
+                break;
+
+            default:
+                break;
+
+        }
     }
 
 
