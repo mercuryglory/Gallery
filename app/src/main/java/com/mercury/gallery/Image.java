@@ -15,6 +15,15 @@ public class Image implements Serializable{
     private String name;
     private String bucketName;
     private long date;
+    private boolean checked;
+
+    public boolean isChecked() {
+        return checked;
+    }
+
+    public void setChecked(boolean checked) {
+        this.checked = checked;
+    }
 
     public int getId() {
         return id;
