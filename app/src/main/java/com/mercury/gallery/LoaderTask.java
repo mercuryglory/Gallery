@@ -3,6 +3,7 @@ package com.mercury.gallery;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -14,7 +15,7 @@ import java.lang.ref.WeakReference;
  * @descript
  */
 
-public class LoaderTask extends AsyncTask<String, Void, Bitmap> {
+public class LoaderTask extends AsyncTask<String, Void, Bitmap> implements Comparable{
 
     private WeakReference<ImageView> mWeakReference;
     private String                   path;
@@ -42,7 +43,6 @@ public class LoaderTask extends AsyncTask<String, Void, Bitmap> {
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeFile(path, options);
         if (bitmap != null) {
-            Log.i(TAG, "path:" + path);
             ImageLoader.getInstance().addImageToCache(path, bitmap);
         }
         return bitmap;
@@ -53,9 +53,14 @@ public class LoaderTask extends AsyncTask<String, Void, Bitmap> {
         ImageView imageView = mWeakReference.get();
         if (imageView != null && path.equals(imageView.getTag())) {
             count++;
-            Log.i(TAG, "onPostExecute: " + count);
+            Log.i(TAG + count, "time:" + System.currentTimeMillis());
             imageView.setImageBitmap(bitmap);
         }
 
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        return 0;
     }
 }

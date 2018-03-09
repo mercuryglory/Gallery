@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
@@ -46,9 +47,8 @@ public class ImageLoader {
 
     public ImageLoader() {
         mainHandler = new Handler(Looper.getMainLooper());
-//        mExecutor = new ThreadPoolExecutor(0, 1, 60L, TimeUnit.SECONDS, new
-//                LinkedBlockingQueue<Runnable>());
         mExecutor = Executors.newFixedThreadPool(6);
+        mExecutor = new FifoPriorityThreadPoolExecutor(8);
         int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 8);
         mCache = new LruCache<String, Bitmap>(maxMemory);
     }
@@ -76,7 +76,7 @@ public class ImageLoader {
         } else {
             imageView.setImageDrawable(new ColorDrawable(Color.parseColor("#E9EBF0")));
 //            LoaderTask task = new LoaderTask(imageView, path, reqWidth, reqHeight);
-            //            task.execute(path);
+//            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path);
             mExecutor.execute(new WorkerRunnable(imageView, path, reqWidth, reqHeight));
 
         }
@@ -97,12 +97,12 @@ public class ImageLoader {
         return inSampleSize;
     }
 
-    private class WorkerRunnable implements Runnable{
+    private class WorkerRunnable implements Runnable, Comparable {
 
         private ImageView mImageView;
-        private String                   path;
-        private int                      reqWidth;
-        private int                      reqHeight;
+        private String    path;
+        private int       reqWidth;
+        private int       reqHeight;
 
         public WorkerRunnable(ImageView imageView, String path, int reqWidth, int reqHeight) {
             this.mImageView = imageView;
@@ -113,28 +113,32 @@ public class ImageLoader {
 
         @Override
         public void run() {
-            Log.i(TAG, "loading: " + this.hashCode());
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(path, options);
-            options.inSampleSize = ImageLoader.getInstance().calculateInSampleSize(options, reqWidth, reqHeight);
+            options.inSampleSize = ImageLoader.getInstance().calculateInSampleSize(options,
+                    reqWidth, reqHeight);
             options.inJustDecodeBounds = false;
             final Bitmap bitmap = BitmapFactory.decodeFile(path, options);
             if (bitmap != null) {
-//                count++;
                 ImageLoader.getInstance().addImageToCache(path, bitmap);
             }
             if (mImageView != null && path.equals(mImageView.getTag())) {
                 mainHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i(TAG, "done: " + WorkerRunnable.this.hashCode());
+                        Log.i(TAG, WorkerRunnable.this.hashCode() + ":" + System.currentTimeMillis());
                         mImageView.setImageBitmap(bitmap);
                     }
                 });
             }
 
 
+        }
+
+        @Override
+        public int compareTo(@NonNull Object o) {
+            return 0;
         }
     }
 

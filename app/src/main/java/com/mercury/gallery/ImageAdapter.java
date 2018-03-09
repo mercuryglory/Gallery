@@ -1,15 +1,11 @@
 package com.mercury.gallery;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +38,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
 
         int itemWidth = ScreenUtils.getScreenWidth(mContext)/4;
         int itemHeight = ScreenUtils.getScreenHeight(mContext)/4;
-        Glide.with(mContext).load(path).placeholder(new ColorDrawable(Color.parseColor("#E9EBF0")
-        )).into(holder.ivPhoto);
-//        ImageLoader.getInstance().loadImage(holder.ivPhoto, path,
-//                itemWidth, itemHeight);
+//        Glide.with(mContext).load(path).placeholder(new ColorDrawable(Color.parseColor("#E9EBF0")
+//        )).into(holder.ivPhoto);
+        ImageLoader.getInstance().loadImage(holder.ivPhoto, path,
+                itemWidth, itemHeight);
 
     }
 
