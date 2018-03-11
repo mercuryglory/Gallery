@@ -12,14 +12,12 @@
         android:scaleType="centerCrop"
         tools:src="@mipmap/ic_launcher" />
 
-    <CheckBox
+    <ImageView
         android:id="@+id/cb_select"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_gravity="right"
-        android:layout_margin="3dp"
-        android:background="@drawable/item_choose"
-        android:button="@null"
+        android:src="@drawable/item_choose"
         android:padding="5dp" />
 
 </com.mercury.gallery.PhotoLayout >
