@@ -8,4 +8,15 @@
         <item name="colorAccent" >@color/colorAccent</item >
     </style >
 
+    <style name="dialog_folder" parent="@android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+    </style>
+
+    <style name="popup_anim">
+        <item name="android:windowEnterAnimation">@anim/pop_bottom_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_bottom_out</item>
+    </style>
+
 </resources >

@@ -15,8 +15,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -40,8 +38,9 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     private TextView tvFolderCatalog;
     private Toolbar toolBar;
 
-    private PopupWindow mPopupWindow;
+    private FolderPopupWindow mPopupWindow;
     private RelativeLayout rlBottom;
+    private View viewBottom;
 
     private View rootView;
 
@@ -53,6 +52,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         mImageAdapter = new ImageAdapter(this);
 
         rootView = LayoutInflater.from(this).inflate(R.layout.activity_select_photo, null);
+        viewBottom = findViewById(R.id.view_bottom);
         rlBottom = findViewById(R.id.rl_bottom);
 
         rvPhoto = findViewById(R.id.rv_photo);
@@ -64,23 +64,27 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         toolBar = findViewById(R.id.toolBar);
         tvFolderCatalog.setOnClickListener(this);
         Log.i(TAG, "maxThread:" + Runtime.getRuntime().availableProcessors());
+
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_folder_catalog:
-                View view = LayoutInflater.from(this).inflate(R.layout.item_image, null);
+
                 if (mPopupWindow == null) {
-                    mPopupWindow = new PopupWindow(this);
-                    mPopupWindow.setContentView(view);
-                    mPopupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
-                    mPopupWindow.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+                    mPopupWindow = new FolderPopupWindow(this);
                     mPopupWindow.setOutsideTouchable(true);
                 }
-                rlBottom.measure(0, 0);
-                int measuredHeight = rlBottom.getMeasuredHeight();
-                mPopupWindow.showAtLocation(rootView, Gravity.BOTTOM, 0, measuredHeight);
+                if (mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                } else {
+                    rlBottom.measure(0, 0);
+                    int measuredHeight = rlBottom.getMeasuredHeight();
+                    mPopupWindow.showAtLocation(viewBottom, Gravity.BOTTOM, 0, measuredHeight * 2);
+                }
+                Log.i(TAG, "onClick: " + mPopupWindow.isShowing());
                 break;
 
             default:
