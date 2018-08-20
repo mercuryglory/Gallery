@@ -12,14 +12,15 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author wang.zhonghao
@@ -44,6 +45,8 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 
     private View rootView;
 
+    private List<AlbumBucket> albumList;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +66,6 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         tvFolderCatalog = findViewById(R.id.tv_folder_catalog);
         toolBar = findViewById(R.id.toolBar);
         tvFolderCatalog.setOnClickListener(this);
-        Log.i(TAG, "maxThread:" + Runtime.getRuntime().availableProcessors());
 
 
     }
@@ -76,13 +78,26 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
                 if (mPopupWindow == null) {
                     mPopupWindow = new FolderPopupWindow(this);
                     mPopupWindow.setOutsideTouchable(true);
+                    mPopupWindow.setData(albumList);
+                }
+                if (mPopupWindow.getAdapter() != null) {
+                    mPopupWindow.getAdapter().setOnSelectListener(new AlbumAdapter.OnSelectListener() {
+
+                        @Override
+                        public void onSelect(int position, AlbumBucket bucket) {
+                            mImageAdapter.setData(bucket.getImageList());
+                            tvFolderCatalog.setText(bucket.getName());
+                            mPopupWindow.dismiss();
+                        }
+                    });
                 }
                 if (mPopupWindow.isShowing()) {
                     mPopupWindow.dismiss();
                 } else {
-                    rlBottom.measure(0, 0);
-                    int measuredHeight = rlBottom.getMeasuredHeight();
-                    mPopupWindow.showAtLocation(viewBottom, Gravity.BOTTOM, 0, measuredHeight * 2);
+//                    rlBottom.measure(0, 0);
+//                    int measuredHeight = rlBottom.getMeasuredHeight();
+//                    mPopupWindow.showAtLocation(viewBottom, Gravity.BOTTOM, 0, 0 );
+                    mPopupWindow.showAsDropDown(viewBottom, 0, 0);
                 }
                 Log.i(TAG, "onClick: " + mPopupWindow.isShowing());
                 break;
@@ -106,6 +121,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            Log.i(TAG, "onCreateLoader: ");
             if (id == 0) {
                 return new CursorLoader(SelectPhotoActivity.this, MediaStore.Images.Media
                         .EXTERNAL_CONTENT_URI, IMAGE_INFO, null, null, IMAGE_INFO[2] + " DESC");
@@ -117,6 +133,12 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             if (data != null) {
                 List<Image> imageList = new ArrayList<>();
+                Map<String,AlbumBucket> albumMap = new HashMap<>();
+
+
+                AlbumBucket bucketAll = new AlbumBucket();
+                bucketAll.setChecked(true);
+                bucketAll.setName("全部");
 
                 if (data.getCount() > 0) {
                     data.moveToFirst();
@@ -136,16 +158,34 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 
                         imageList.add(image);
 
+                        AlbumBucket bucket = albumMap.get(bucketName);
+                        if (bucket != null) {
+                            bucket.addImage(image);
+                        } else {
+                            bucket = new AlbumBucket();
+                            bucket.setName(bucketName);
+                            bucket.addImage(image);
+                            albumMap.put(bucketName, bucket);
+                        }
+
                     }
                 }
                 mImageAdapter.setData(imageList);
+
+                albumList = new ArrayList<>();
+                bucketAll.setImageList(imageList);
+                albumList.add(bucketAll);
+
+                for (Map.Entry<String, AlbumBucket> entry : albumMap.entrySet()) {
+                    albumList.add(entry.getValue());
+                }
 
             }
         }
 
         @Override
         public void onLoaderReset(Loader<Cursor> loader) {
-
+            Log.i(TAG, "onLoaderReset: ");
         }
     }
 }

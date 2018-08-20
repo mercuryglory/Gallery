@@ -25,6 +25,7 @@ public class LoaderTask extends AsyncTask<String, Void, Bitmap> implements Compa
     public static final String TAG = "LoaderTask";
     public static int count;
 
+
     public LoaderTask(ImageView imageView, String path, int reqWidth, int reqHeight) {
         mWeakReference = new WeakReference<ImageView>(imageView);
         this.path = path;
@@ -43,7 +44,7 @@ public class LoaderTask extends AsyncTask<String, Void, Bitmap> implements Compa
         options.inJustDecodeBounds = false;
         Bitmap bitmap = BitmapFactory.decodeFile(path, options);
         if (bitmap != null) {
-            ImageLoader.getInstance().addImageToCache(path, bitmap);
+            ImageLoader.getInstance().addImageToCache(path, reqWidth, reqHeight, bitmap);
         }
         return bitmap;
     }

@@ -16,8 +16,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     public  LayoutInflater mInflater;
     public  Context        mContext;
 
-    public static final String TAG = "ImageAdapter";
-
     public ImageAdapter(Context context) {
         mContext = context;
         mInflater = LayoutInflater.from(mContext);
@@ -37,9 +35,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
         int itemWidth = ScreenUtils.getScreenWidth(mContext) / 4;
         int itemHeight = ScreenUtils.getScreenHeight(mContext) / 4;
-        //        Glide.with(mContext).load(path).placeholder(new ColorDrawable(Color.parseColor
-        // ("#E9EBF0")
-        //        )).into(holder.ivPhoto);
+
         ImageLoader.getInstance().loadImage(holder.ivPhoto, path,
                 itemWidth, itemHeight);
         holder.cbSelect.setOnClickListener(new View.OnClickListener() {

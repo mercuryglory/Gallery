@@ -1,6 +1,7 @@
 package com.mercury.gallery;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * @author wang.zhonghao
@@ -8,7 +9,7 @@ import java.io.Serializable;
  * @descript
  */
 
-public class Image implements Serializable{
+public class Image implements Parcelable{
 
     private int id;
     private String path;
@@ -16,6 +17,31 @@ public class Image implements Serializable{
     private String bucketName;
     private long date;
     private boolean checked;
+
+    public Image() {
+
+    }
+
+    private Image(Parcel in) {
+        id = in.readInt();
+        path = in.readString();
+        name = in.readString();
+        bucketName = in.readString();
+        date = in.readLong();
+        checked = in.readByte() != 0;
+    }
+
+    public static final Creator<Image> CREATOR = new Creator<Image>() {
+        @Override
+        public Image createFromParcel(Parcel in) {
+            return new Image(in);
+        }
+
+        @Override
+        public Image[] newArray(int size) {
+            return new Image[size];
+        }
+    };
 
     public boolean isChecked() {
         return checked;
@@ -65,4 +91,19 @@ public class Image implements Serializable{
         this.date = date;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeInt(id);
+        dest.writeString(path);
+        dest.writeString(name);
+        dest.writeString(bucketName);
+        dest.writeLong(date);
+        dest.writeByte((byte) (checked ? 1 : 0));
+    }
 }
