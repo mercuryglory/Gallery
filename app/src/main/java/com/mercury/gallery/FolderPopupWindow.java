@@ -40,7 +40,7 @@ public class FolderPopupWindow extends PopupWindow {
         setWidth(ScreenUtils.getScreenWidth(context));
         setHeight(ScreenUtils.getScreenHeight(context) / 4 * 3);
         setAnimationStyle(R.style.popup_anim);
-        ColorDrawable drawable = new ColorDrawable(Color.WHITE);
+        ColorDrawable drawable = new ColorDrawable(Color.BLACK);
         setBackgroundDrawable(drawable);
 
         setAdapter(rvAlbum, context);

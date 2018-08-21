@@ -13,7 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -37,6 +40,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     private ImageAdapter mImageAdapter;
     private RecyclerView rvPhoto;
     private TextView tvFolderCatalog;
+    private FrameLayout flContent;
     private Toolbar toolBar;
 
     private FolderPopupWindow mPopupWindow;
@@ -57,6 +61,8 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         rootView = LayoutInflater.from(this).inflate(R.layout.activity_select_photo, null);
         viewBottom = findViewById(R.id.view_bottom);
         rlBottom = findViewById(R.id.rl_bottom);
+        flContent = findViewById(R.id.fl_content);
+        flContent.getForeground().setAlpha(0);
 
         rvPhoto = findViewById(R.id.rv_photo);
         rvPhoto.setLayoutManager(new GridLayoutManager(this, 4));
@@ -67,7 +73,20 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         toolBar = findViewById(R.id.toolBar);
         tvFolderCatalog.setOnClickListener(this);
 
+        setSupportActionBar(toolBar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("本地图片");
+        }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -91,6 +110,12 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
                         }
                     });
                 }
+                mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                    @Override
+                    public void onDismiss() {
+                        flContent.getForeground().setAlpha(0);
+                    }
+                });
                 if (mPopupWindow.isShowing()) {
                     mPopupWindow.dismiss();
                 } else {
@@ -98,6 +123,8 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 //                    int measuredHeight = rlBottom.getMeasuredHeight();
 //                    mPopupWindow.showAtLocation(viewBottom, Gravity.BOTTOM, 0, 0 );
                     mPopupWindow.showAsDropDown(viewBottom, 0, 0);
+                    setBackgroundAlpha(0.3f);
+                    flContent.getForeground().setAlpha(127);
                 }
                 Log.i(TAG, "onClick: " + mPopupWindow.isShowing());
                 break;
@@ -108,6 +135,12 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
+    private void setBackgroundAlpha(float alpha) {
+//        WindowManager.LayoutParams attributes = getWindow().getAttributes();
+//        attributes.alpha = alpha;
+//        getWindow().setAttributes(attributes);
+
+    }
 
     private class CursorCallback implements LoaderManager.LoaderCallbacks<Cursor> {
 

@@ -42,7 +42,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder>{
         final AlbumBucket albumBucket = mData.get(position);
         holder.tvBucketName.setText(albumBucket.getName());
         holder.tvCount.setText(albumBucket.getImageList().size() + "张");
-        holder.rbSelect.setChecked(albumBucket.isChecked());
+        holder.rbSelect.setVisibility(albumBucket.isChecked() ? View.VISIBLE : View.INVISIBLE);
 
         String path = albumBucket.getImageList().get(0).getPath();
         int size = DisplayUtils.dp2px(mContext, 80);
@@ -57,7 +57,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder>{
                 notifyItemChanged(selectPosition);
                 selectPosition = position;
                 albumBucket.setChecked(true);
-                holder.rbSelect.setChecked(true);
+                holder.rbSelect.setVisibility(View.VISIBLE);
                 if (mOnSelectListener != null) {
                     mOnSelectListener.onSelect(position, albumBucket);
                 }

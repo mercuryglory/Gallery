@@ -17,6 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/rb_select"
         android:layout_toRightOf="@id/iv_album"
         android:orientation="vertical" >
 
@@ -44,7 +45,10 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_margin="15dp"
+        android:checked="true"
         android:clickable="false"
-        android:focusable="false" />
+        android:focusable="false"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
 </RelativeLayout >
