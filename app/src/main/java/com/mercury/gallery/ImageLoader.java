@@ -12,7 +12,6 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * @author wang.zhonghao
@@ -45,7 +44,7 @@ public class ImageLoader {
 
     public ImageLoader() {
         mainHandler = new Handler(Looper.getMainLooper());
-        mExecutor = Executors.newFixedThreadPool(6);
+//        mExecutor = Executors.newFixedThreadPool(6);
         mExecutor = new FifoPriorityThreadPoolExecutor(8);
         int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 8);
         long l = Runtime.getRuntime().totalMemory() / 1024 / 1024;
@@ -57,12 +56,6 @@ public class ImageLoader {
                 return value.getByteCount();
             }
 
-            @Override
-            protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap
-                    newValue) {
-                Log.i(TAG, toString());
-
-            }
         };
     }
 
@@ -88,12 +81,33 @@ public class ImageLoader {
             imageView.setImageBitmap(bitmap);
         } else {
             imageView.setImageDrawable(new ColorDrawable(Color.parseColor("#E9EBF0")));
-            //            LoaderTask task = new LoaderTask(imageView, path, reqWidth, reqHeight);
-            //            ExecutorService executorService = Executors.newFixedThreadPool(1000);
-            //            task.executeOnExecutor(executorService, path);
+            mExecutor.execute(new WorkerRunnable(imageView, path, reqWidth, reqHeight, null,true));
+        }
+    }
 
-            mExecutor.execute(new WorkerRunnable(imageView, path, reqWidth, reqHeight));
+    public void loadImage(final ImageView imageView, String path, int reqWidth, int
+            reqHeight, BitmapFactory.Options options) {
+        Bitmap bitmap = getImageFromCache(path, reqWidth, reqHeight);
+        imageView.setTag(path);
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+        } else {
+            imageView.setImageDrawable(new ColorDrawable(Color.parseColor("#E9EBF0")));
+            mExecutor.execute(new WorkerRunnable(imageView, path, reqWidth, reqHeight, options,
+                    true));
+        }
+    }
 
+    public void loadImage(final ImageView imageView, String path, int reqWidth, int
+            reqHeight, BitmapFactory.Options options,boolean useOptions) {
+        Bitmap bitmap = getImageFromCache(path, reqWidth, reqHeight);
+        imageView.setTag(path);
+        if (bitmap != null) {
+            imageView.setImageBitmap(bitmap);
+        } else {
+            imageView.setImageDrawable(new ColorDrawable(Color.parseColor("#E9EBF0")));
+            mExecutor.execute(new WorkerRunnable(imageView, path, reqWidth, reqHeight, options,
+                    useOptions));
         }
     }
 
@@ -118,24 +132,39 @@ public class ImageLoader {
         private String    path;
         private int       reqWidth;
         private int       reqHeight;
+        private BitmapFactory.Options mOptions;
+        private boolean useOptions;
 
-        WorkerRunnable(ImageView imageView, String path, int reqWidth, int reqHeight) {
+        WorkerRunnable(ImageView imageView, String path, int reqWidth, int reqHeight,
+                       BitmapFactory.Options options,boolean useOptions) {
             this.mImageView = imageView;
             this.path = path;
             this.reqWidth = reqWidth;
             this.reqHeight = reqHeight;
+            this.mOptions = options;
+            this.useOptions = useOptions;
         }
 
         @Override
         public void run() {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(path, options);
-            options.inSampleSize = ImageLoader.getInstance().calculateInSampleSize(options,
-                    reqWidth, reqHeight);
-            options.inJustDecodeBounds = false;
+            BitmapFactory.Options options;
+            if (!useOptions) {
+                options = null;
+            } else {
+                if (mOptions == null) {
+                    options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(path, options);
+                    options.inSampleSize = ImageLoader.getInstance().calculateInSampleSize(options,
+                            reqWidth, reqHeight);
+                    options.inJustDecodeBounds = false;
+                } else {
+                    options = mOptions;
+                }
+            }
+
             final Bitmap bitmap = BitmapFactory.decodeFile(path, options);
-            ImageLoader.getInstance().addImageToCache(path, reqWidth, reqHeight, bitmap);
+            addImageToCache(path, reqWidth, reqHeight, bitmap);
 
             if (mImageView != null && path.equals(mImageView.getTag())) {
                 mainHandler.post(new Runnable() {

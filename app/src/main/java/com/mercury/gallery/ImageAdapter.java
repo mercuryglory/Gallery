@@ -1,6 +1,8 @@
 package com.mercury.gallery;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +31,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Image image = mData.get(position);
         String path = image.getPath();
 
@@ -46,6 +48,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             }
         });
         holder.cbSelect.setSelected(image.isChecked());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ImageGalleryActivity.class);
+                intent.putParcelableArrayListExtra("imageList", (ArrayList<? extends Parcelable>) mData);
+                intent.putExtra("currentPos", position);
+                mContext.startActivity(intent);
+
+            }
+        });
 
     }
 

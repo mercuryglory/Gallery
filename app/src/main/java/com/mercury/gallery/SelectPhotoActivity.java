@@ -12,7 +12,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -47,7 +46,6 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     private RelativeLayout rlBottom;
     private View viewBottom;
 
-    private View rootView;
 
     private List<AlbumBucket> albumList;
 
@@ -58,7 +56,6 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         getLoaderManager().initLoader(0, null, mCursorLoader);
         mImageAdapter = new ImageAdapter(this);
 
-        rootView = LayoutInflater.from(this).inflate(R.layout.activity_select_photo, null);
         viewBottom = findViewById(R.id.view_bottom);
         rlBottom = findViewById(R.id.rl_bottom);
         flContent = findViewById(R.id.fl_content);
