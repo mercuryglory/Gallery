@@ -12,6 +12,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -30,7 +31,7 @@ import java.util.Map;
  * @descript
  */
 
-public class SelectPhotoActivity extends AppCompatActivity implements View.OnClickListener {
+public class SelectPhotoActivity extends AppCompatActivity implements View.OnClickListener, ImageAdapter.OnCheckListener {
 
     public static final String TAG = "SelectPhotoActivity";
 
@@ -41,13 +42,14 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     private TextView tvFolderCatalog;
     private FrameLayout flContent;
     private Toolbar toolBar;
+    private MenuItem menuTitle;
 
     private FolderPopupWindow mPopupWindow;
     private RelativeLayout rlBottom;
     private View viewBottom;
 
-
     private List<AlbumBucket> albumList;
+    private List<String> pathList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,14 +78,30 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
             getSupportActionBar().setTitle("本地图片");
         }
 
+        mImageAdapter.setOnCheckListener(this);
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             finish();
+        } else if (item.getItemId() == R.id.item_title) {
+            completeSelected();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    // TODO: 2018/8/22
+    private void completeSelected() {
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_send, menu);
+        menuTitle = menu.findItem(R.id.item_title);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -120,7 +138,6 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 //                    int measuredHeight = rlBottom.getMeasuredHeight();
 //                    mPopupWindow.showAtLocation(viewBottom, Gravity.BOTTOM, 0, 0 );
                     mPopupWindow.showAsDropDown(viewBottom, 0, 0);
-                    setBackgroundAlpha(0.3f);
                     flContent.getForeground().setAlpha(127);
                 }
                 Log.i(TAG, "onClick: " + mPopupWindow.isShowing());
@@ -132,11 +149,13 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         }
     }
 
-    private void setBackgroundAlpha(float alpha) {
-//        WindowManager.LayoutParams attributes = getWindow().getAttributes();
-//        attributes.alpha = alpha;
-//        getWindow().setAttributes(attributes);
-
+    @Override
+    public void onCheck(String path, boolean isChecked) {
+        if (isChecked) {
+            pathList.add(path);
+        } else {
+            pathList.remove(path);
+        }
     }
 
     private class CursorCallback implements LoaderManager.LoaderCallbacks<Cursor> {

@@ -33,18 +33,21 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final Image image = mData.get(position);
-        String path = image.getPath();
+        final String path = image.getPath();
 
         int itemWidth = ScreenUtils.getScreenWidth(mContext) / 4;
         int itemHeight = ScreenUtils.getScreenHeight(mContext) / 4;
 
-        ImageLoader.getInstance().loadImage(holder.ivPhoto, path,
+        ImageLoaderFactory.createImageLoader().loadImage(holder.ivPhoto, path,
                 itemWidth, itemHeight);
         holder.cbSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 image.setChecked(!v.isSelected());
                 holder.cbSelect.setSelected(image.isChecked());
+                if (mOnCheckListener != null) {
+                    mOnCheckListener.onCheck(path, image.isChecked());
+                }
             }
         });
         holder.cbSelect.setSelected(image.isChecked());
@@ -55,11 +58,31 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 Intent intent = new Intent(mContext, ImageGalleryActivity.class);
                 intent.putParcelableArrayListExtra("imageList", (ArrayList<? extends Parcelable>) mData);
                 intent.putExtra("currentPos", position);
+                intent.putExtra("isSelect", image.isChecked());
                 mContext.startActivity(intent);
 
             }
         });
 
+    }
+
+    private OnItemClickListener mOnItemClickListener;
+    private OnCheckListener mOnCheckListener;
+
+    public interface OnItemClickListener{
+        void onItemClick();
+    }
+
+    public interface OnCheckListener{
+        void onCheck(String path, boolean isChecked);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.mOnItemClickListener = onItemClickListener;
+    }
+
+    public void setOnCheckListener(OnCheckListener onCheckListener) {
+        this.mOnCheckListener = onCheckListener;
     }
 
     @Override
