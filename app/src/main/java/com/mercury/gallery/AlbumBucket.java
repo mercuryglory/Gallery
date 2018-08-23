@@ -20,6 +20,15 @@ public class AlbumBucket implements Parcelable{
 
     private boolean isChecked;
 
+    private long coverDate;
+
+    public long getCoverDate() {
+        if (!imageList.isEmpty()) {
+            this.coverDate = imageList.get(0).getDate();
+        }
+        return coverDate;
+    }
+
     public String getName() {
         return name;
     }
@@ -81,4 +90,14 @@ public class AlbumBucket implements Parcelable{
         dest.writeTypedList(imageList);
         dest.writeByte((byte) (isChecked ? 1 : 0));
     }
+
+    @Override
+    public String toString() {
+        return "AlbumBucket{" +
+                "name='" + name + '\'' +
+                ", imageList=" + imageList +
+                ", isChecked=" + isChecked +
+                '}';
+    }
+
 }

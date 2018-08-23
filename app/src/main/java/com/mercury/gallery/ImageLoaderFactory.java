@@ -15,4 +15,8 @@ public class ImageLoaderFactory {
     public static ImageLoader createGalleryLoader() {
         return GalleryImageLoader.getInstance();
     }
+
+    public static ImageLoader createAlbumLoader() {
+        return AlbumImageLoader.getInstance();
+    }
 }

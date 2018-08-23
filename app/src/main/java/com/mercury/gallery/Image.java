@@ -106,4 +106,5 @@ public class Image implements Parcelable{
         dest.writeLong(date);
         dest.writeByte((byte) (checked ? 1 : 0));
     }
+
 }

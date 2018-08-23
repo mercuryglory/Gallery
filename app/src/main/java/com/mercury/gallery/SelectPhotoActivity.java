@@ -2,6 +2,7 @@ package com.mercury.gallery;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +52,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     private View viewBottom;
 
     private List<AlbumBucket> albumList;
-    private List<String> pathList = new ArrayList<>();
+    private ArrayList<String> mPathList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,9 +95,12 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         return super.onOptionsItemSelected(item);
     }
 
-    // TODO: 2018/8/22
+    //finish the selection of images and return the paths
     private void completeSelected() {
-
+        Intent intent = new Intent();
+        intent.putStringArrayListExtra("pathList", mPathList);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     @Override
@@ -150,20 +156,21 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     }
 
     @Override
-    public void onCheck(String path, boolean isChecked) {
-        if (isChecked) {
-            pathList.add(path);
+    public void onCheck(ArrayList<String> pathList) {
+        mPathList = pathList;
+        if (pathList.isEmpty()) {
+            menuTitle.setTitle("发送");
         } else {
-            pathList.remove(path);
+            menuTitle.setTitle("发送(" + pathList.size() + "/6)");
         }
     }
 
     private class CursorCallback implements LoaderManager.LoaderCallbacks<Cursor> {
 
-        private final String[] IMAGE_INFO={
+        private final String[] IMAGE_INFO = {
                 MediaStore.Images.Media.DATA,           //文件的绝对路径
                 MediaStore.Images.Media.DISPLAY_NAME,   //文件的显示名称
-                MediaStore.Images.Media.DATE_ADDED,     //文件添加的日期
+                MediaStore.Images.Media.DATE_TAKEN,     //文件添加的日期
                 MediaStore.Images.Media._ID,            //文件的主键
                 MediaStore.Images.Media.BUCKET_DISPLAY_NAME     //包含该图片的文件夹名
         };
@@ -173,7 +180,8 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
             Log.i(TAG, "onCreateLoader: ");
             if (id == 0) {
                 return new CursorLoader(SelectPhotoActivity.this, MediaStore.Images.Media
-                        .EXTERNAL_CONTENT_URI, IMAGE_INFO, null, null, IMAGE_INFO[2] + " DESC");
+                        .EXTERNAL_CONTENT_URI, IMAGE_INFO, null, null, IMAGE_INFO[2] + " DESC," +
+                        IMAGE_INFO[1] + " DESC");
             }
             return null;
         }
@@ -184,13 +192,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
                 List<Image> imageList = new ArrayList<>();
                 Map<String,AlbumBucket> albumMap = new HashMap<>();
 
-
-                AlbumBucket bucketAll = new AlbumBucket();
-                bucketAll.setChecked(true);
-                bucketAll.setName("全部");
-
                 if (data.getCount() > 0) {
-                    data.moveToFirst();
                     while (data.moveToNext()) {
                         String path = data.getString(data.getColumnIndexOrThrow(IMAGE_INFO[0]));
                         String name = data.getString(data.getColumnIndexOrThrow(IMAGE_INFO[1]));
@@ -221,6 +223,9 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
                 }
                 mImageAdapter.setData(imageList);
 
+                AlbumBucket bucketAll = new AlbumBucket();
+                bucketAll.setChecked(true);
+                bucketAll.setName("全部");
                 albumList = new ArrayList<>();
                 bucketAll.setImageList(imageList);
                 albumList.add(bucketAll);
@@ -228,7 +233,15 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
                 for (Map.Entry<String, AlbumBucket> entry : albumMap.entrySet()) {
                     albumList.add(entry.getValue());
                 }
-
+                Collections.sort(albumList, new Comparator<AlbumBucket>() {
+                    @Override
+                    public int compare(AlbumBucket o1, AlbumBucket o2) {
+                        Log.i(TAG, "compare: " + o2.getCoverDate() + "," + o1.getCoverDate());
+//                        return (int) (o2.getImageList().get(0).getDate()-o1.getImageList().get(0).getDate());
+                        return (int) (o2.getCoverDate() - o1.getCoverDate());
+                    }
+                });
+                data.close();
             }
         }
 

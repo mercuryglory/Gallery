@@ -37,13 +37,12 @@ public class GalleryImageLoader implements ImageLoader {
         return sInstance;
     }
 
-    public GalleryImageLoader() {
+    private GalleryImageLoader() {
         mExecutor = Executors.newFixedThreadPool(6);
         int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 8);
         mCache = new LruCache<String, Bitmap>(maxMemory) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
-                int byteCount = value.getByteCount();
                 return value.getByteCount();
             }
         };

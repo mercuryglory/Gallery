@@ -47,7 +47,7 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.ViewHolder>{
         String path = albumBucket.getImageList().get(0).getPath();
         int size = DisplayUtils.dp2px(mContext, 80);
 
-        ImageLoaderFactory.createImageLoader().loadImage(holder.ivAlbum, path, size, size);
+        ImageLoaderFactory.createAlbumLoader().loadImage(holder.ivAlbum, path, size, size);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

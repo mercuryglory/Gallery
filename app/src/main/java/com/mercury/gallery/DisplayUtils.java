@@ -34,4 +34,20 @@ public class DisplayUtils {
         return inSampleSize;
     }
 
+    public static int calculateMaxSampleSize(BitmapFactory.Options options, int reqWidth, int
+            reqHeight) {
+        //源图片的宽高
+        final int width = options.outWidth;
+        final int height = options.outHeight;
+        int inSampleSize = 1;
+        if (width > reqWidth || height > reqHeight) {
+            final int halfWidth = width / 2;
+            final int halfHeight = height / 2;
+            while (halfWidth / inSampleSize > reqWidth && halfHeight / inSampleSize > reqHeight) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+
 }

@@ -35,8 +35,8 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     private MenuItem  menuTitle;
 
     private ArrayList<Image> imageList;
-    private ArrayList<Integer> selectedList = new ArrayList<>(6);
-    private Integer selectedPos;
+    private ArrayList<String> selectedList;
+    private String currentPath;
 
     public static final String TAG = "ImageGalleryActivity";
 
@@ -56,20 +56,22 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         Intent intent = getIntent();
         imageList = intent.getParcelableArrayListExtra("imageList");
         int currentPos = intent.getIntExtra("currentPos", 0);
-        selectedPos = currentPos;
         ivSelect.setSelected(intent.getBooleanExtra("isSelect", false));
+        selectedList = intent.getStringArrayListExtra("selectList");
 
         ImageGalleryAdapter adapter = new ImageGalleryAdapter(imageList);
         vpImage.setAdapter(adapter);
-        vpImage.setCurrentItem(currentPos);
+
 
         setSupportActionBar(toolBar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle(currentPos + 1 + "/" + imageList.size());
         }
 
-        vpImage.addOnPageChangeListener(new PageListener());
+        PageListener listener = new PageListener();
+        vpImage.addOnPageChangeListener(listener);
+        vpImage.setCurrentItem(currentPos);
+        listener.onPageSelected(currentPos);
 
     }
 
@@ -80,18 +82,13 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
                 Toast.makeText(this, "你最多只能选择6张照片", Toast.LENGTH_SHORT).show();
             } else {
                 ivSelect.setSelected(!ivSelect.isSelected());
-                selectedList.add(selectedPos);
+                selectedList.add(currentPath);
             }
         } else {
             ivSelect.setSelected(!ivSelect.isSelected());
-            selectedList.remove(selectedPos);
+            selectedList.remove(currentPath);
         }
-
-        if (selectedList.isEmpty()) {
-            menuTitle.setTitle("发送");
-        } else {
-            menuTitle.setTitle("发送(" + selectedList.size() + "/6)");
-        }
+        updateSelectSize();
 
     }
 
@@ -99,13 +96,12 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onPageSelected(int position) {
-            selectedPos = position;
+            currentPath = imageList.get(position).getPath();
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setTitle(position + 1 + "/" + imageList.size());
             }
-            ivSelect.setSelected(selectedList.contains(position));
+            ivSelect.setSelected(selectedList.contains(currentPath));
         }
-
     }
 
 
@@ -113,11 +109,18 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_send, menu);
         menuTitle = menu.findItem(R.id.item_title);
-        if (ivSelect.isSelected() && menuTitle != null) {
-            selectedList.add(selectedPos);
-            menuTitle.setTitle("发送(" + selectedList.size() + "/6)");
-        }
+        updateSelectSize();
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void updateSelectSize() {
+        if (menuTitle != null) {
+            if (selectedList.isEmpty()) {
+                menuTitle.setTitle("发送");
+            } else {
+                menuTitle.setTitle("发送(" + selectedList.size() + "/6)");
+            }
+        }
     }
 
     @Override
@@ -136,7 +139,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         private ArrayList<Image> mList;
 
 
-        public ImageGalleryAdapter(ArrayList<Image> list) {
+        private ImageGalleryAdapter(ArrayList<Image> list) {
             mList = list;
         }
 

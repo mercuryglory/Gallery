@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,11 +18,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     private List<Image>    mData;
     public  LayoutInflater mInflater;
     public  Context        mContext;
+    private ArrayList<String> pathList;
 
     public ImageAdapter(Context context) {
         mContext = context;
         mInflater = LayoutInflater.from(mContext);
         mData = new ArrayList<>();
+        pathList = new ArrayList<>();
     }
 
     @Override
@@ -43,10 +46,19 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         holder.cbSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!image.isChecked() && pathList.size() >= 6) {
+                    Toast.makeText(mContext, "你最多只能选择6张照片", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 image.setChecked(!v.isSelected());
                 holder.cbSelect.setSelected(image.isChecked());
+                if (image.isChecked()) {
+                    pathList.add(path);
+                } else {
+                    pathList.remove(path);
+                }
                 if (mOnCheckListener != null) {
-                    mOnCheckListener.onCheck(path, image.isChecked());
+                    mOnCheckListener.onCheck(pathList);
                 }
             }
         });
@@ -59,6 +71,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 intent.putParcelableArrayListExtra("imageList", (ArrayList<? extends Parcelable>) mData);
                 intent.putExtra("currentPos", position);
                 intent.putExtra("isSelect", image.isChecked());
+                intent.putStringArrayListExtra("selectList", pathList);
                 mContext.startActivity(intent);
 
             }
@@ -74,7 +87,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     }
 
     public interface OnCheckListener{
-        void onCheck(String path, boolean isChecked);
+        void onCheck(ArrayList<String> pathList);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
