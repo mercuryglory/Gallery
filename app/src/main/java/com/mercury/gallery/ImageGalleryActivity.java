@@ -1,5 +1,8 @@
 package com.mercury.gallery;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,7 +17,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,27 +34,39 @@ import java.util.ArrayList;
 
 public class ImageGalleryActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ViewPager vpImage;
     private Toolbar   toolBar;
-    private TextView  tvSelect;
     private ImageView ivSelect;
     private MenuItem  menuTitle;
+    private RelativeLayout rlBottom;
 
-    private ArrayList<Image> imageList;
+    private ArrayList<Image>  imageList;
     private ArrayList<String> selectedList;
-    private String currentPath;
+    private String            currentPath;
 
     public static final String TAG = "ImageGalleryActivity";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
         setContentView(R.layout.activity_image_gallery);
 
+        int statusBarHeight = ScreenUtils.getStatusBarHeight(this);
+
         toolBar = findViewById(R.id.toolBar);
-        vpImage = findViewById(R.id.vp_image);
-        tvSelect = findViewById(R.id.tv_select);
+        toolBar.measure(0, 0);
+        int height = toolBar.getMeasuredHeight();
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams
+                .MATCH_PARENT, height + statusBarHeight);
+        toolBar.setLayoutParams(lp);
+        toolBar.setPadding(toolBar.getPaddingLeft(), toolBar.getPaddingTop() + statusBarHeight,
+                toolBar.getPaddingRight(), toolBar.getPaddingBottom());
+
+        ViewPager vpImage = findViewById(R.id.vp_image);
+        TextView  tvSelect = findViewById(R.id.tv_select);
         ivSelect = findViewById(R.id.iv_select);
+        rlBottom = findViewById(R.id.rl_bottom);
 
         tvSelect.setOnClickListener(this);
         ivSelect.setOnClickListener(this);
@@ -90,6 +108,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         updateSelectSize();
 
     }
+
 
     private class PageListener extends ViewPager.SimpleOnPageChangeListener {
 
@@ -139,11 +158,11 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
             selectedList.add(currentPath);
         }
         intent.putStringArrayListExtra("pathList", selectedList);
-        setResult(RESULT_OK,intent);
+        setResult(RESULT_OK, intent);
         finish();
     }
 
-    private class ImageGalleryAdapter extends PagerAdapter{
+    private class ImageGalleryAdapter extends PagerAdapter {
 
         private ArrayList<Image> mList;
 
@@ -158,7 +177,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(ViewGroup container, final int position) {
             ImageView imageView = new ImageView(container.getContext());
             imageView.setBackground(new ColorDrawable(Color.BLACK));
             Image image = mList.get(position);
@@ -167,6 +186,22 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
                         ScreenUtils.getScreenWidth(container.getContext()), ScreenUtils
                                 .getScreenHeight(container.getContext()));
             }
+
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int systemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
+                    if (systemUiVisibility!=View.SYSTEM_UI_FLAG_VISIBLE) {
+                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                        showWidgets();
+                    } else {
+                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                        dismissWidgets();
+
+                    }
+                }
+            });
+
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             container.addView(imageView);
             return imageView;
@@ -176,12 +211,12 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
-//            ImageView view = (ImageView) object;
-//            container.removeView(view);
-//            view.setDrawingCacheEnabled(true);
-//            Bitmap drawingCache = view.getDrawingCache();
-//            view.setDrawingCacheEnabled(false);
-//            drawingCache.recycle();
+            //            ImageView view = (ImageView) object;
+            //            container.removeView(view);
+            //            view.setDrawingCacheEnabled(true);
+            //            Bitmap drawingCache = view.getDrawingCache();
+            //            view.setDrawingCacheEnabled(false);
+            //            drawingCache.recycle();
         }
 
         @Override
@@ -189,6 +224,33 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
             return view == object;
         }
 
+    }
+
+    private void showWidgets() {
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(toolBar, "translationY", 0);
+        objectAnimator.setDuration(500);
+        objectAnimator.start();
+
+        rlBottom.animate().alpha(1.0f).setDuration(500).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                rlBottom.setVisibility(View.VISIBLE);
+            }
+        }).start();
+    }
+
+    private void dismissWidgets() {
+        int height = toolBar.getMeasuredHeight();
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(toolBar, "translationY", -height);
+        objectAnimator.setDuration(500);
+        objectAnimator.start();
+
+        rlBottom.animate().alpha(0.0f).setDuration(500).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                rlBottom.setVisibility(View.INVISIBLE);
+            }
+        }).start();
     }
 
     @Override
