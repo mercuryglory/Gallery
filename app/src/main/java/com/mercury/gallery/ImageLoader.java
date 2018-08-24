@@ -13,4 +13,6 @@ public interface ImageLoader {
 
     void loadImage(@NonNull final ImageView imageView, String path, int reqWidth, int reqHeight);
 
+    void clearCache();
+
 }

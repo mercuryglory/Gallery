@@ -262,5 +262,12 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
             Log.i(TAG, "onLoaderReset: ");
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ImageLoaderFactory.createImageLoader().clearCache();
+        ImageLoaderFactory.createAlbumLoader().clearCache();
+    }
 }
 

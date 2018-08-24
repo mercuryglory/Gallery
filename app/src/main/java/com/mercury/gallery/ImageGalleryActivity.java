@@ -190,4 +190,10 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         }
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ImageLoaderFactory.createGalleryLoader().clearCache();
+    }
 }

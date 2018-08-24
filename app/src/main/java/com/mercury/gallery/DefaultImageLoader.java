@@ -73,6 +73,13 @@ public class DefaultImageLoader implements ImageLoader{
     }
 
     @Override
+    public void clearCache() {
+        if (mCache != null) {
+            mCache.evictAll();
+        }
+    }
+
+    @Override
     public void loadImage(@NonNull final ImageView imageView, String path, int reqWidth, int
             reqHeight) {
         Bitmap bitmap = getImageFromCache(path, reqWidth, reqHeight);

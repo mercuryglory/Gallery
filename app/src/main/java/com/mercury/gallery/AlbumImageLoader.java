@@ -59,6 +59,13 @@ public class AlbumImageLoader implements ImageLoader {
         }
     }
 
+    @Override
+    public void clearCache() {
+        if (mCache != null) {
+            mCache.evictAll();
+        }
+    }
+
     public void addImageToCache(String key, Bitmap bitmap) {
         if (bitmap != null) {
             synchronized (mCache) {
