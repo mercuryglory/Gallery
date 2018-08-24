@@ -2,7 +2,6 @@ package com.mercury.gallery;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,7 +67,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ImageGalleryActivity.class);
-                intent.putParcelableArrayListExtra("imageList", (ArrayList<? extends Parcelable>) mData);
+                ImageGalleryActivity.imageList = (ArrayList<Image>) mData;
                 intent.putExtra("currentPos", position);
                 intent.putStringArrayListExtra("selectList", pathList);
                 ((SelectPhotoActivity)mContext).startActivityForResult(intent,SelectPhotoActivity.REQUEST_GALLERY);

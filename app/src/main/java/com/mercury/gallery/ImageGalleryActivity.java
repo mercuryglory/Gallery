@@ -34,14 +34,14 @@ import java.util.ArrayList;
 
 public class ImageGalleryActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Toolbar   toolBar;
-    private ImageView ivSelect;
-    private MenuItem  menuTitle;
+    private Toolbar        toolBar;
+    private ImageView      ivSelect;
+    private MenuItem       menuTitle;
     private RelativeLayout rlBottom;
 
-    private ArrayList<Image>  imageList;
-    private ArrayList<String> selectedList;
-    private String            currentPath;
+    public static ArrayList<Image>  imageList;
+    private       ArrayList<String> selectedList;
+    private       String            currentPath;
 
     public static final String TAG = "ImageGalleryActivity";
 
@@ -64,7 +64,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
                 toolBar.getPaddingRight(), toolBar.getPaddingBottom());
 
         ViewPager vpImage = findViewById(R.id.vp_image);
-        TextView  tvSelect = findViewById(R.id.tv_select);
+        TextView tvSelect = findViewById(R.id.tv_select);
         ivSelect = findViewById(R.id.iv_select);
         rlBottom = findViewById(R.id.rl_bottom);
 
@@ -72,7 +72,6 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         ivSelect.setOnClickListener(this);
 
         Intent intent = getIntent();
-        imageList = intent.getParcelableArrayListExtra("imageList");
         int currentPos = intent.getIntExtra("currentPos", 0);
         selectedList = intent.getStringArrayListExtra("selectList");
 
@@ -191,11 +190,13 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
                 @Override
                 public void onClick(View v) {
                     int systemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
-                    if (systemUiVisibility!=View.SYSTEM_UI_FLAG_VISIBLE) {
-                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                    if (systemUiVisibility != View.SYSTEM_UI_FLAG_VISIBLE) {
+                        getWindow().getDecorView().setSystemUiVisibility(View
+                                .SYSTEM_UI_FLAG_VISIBLE);
                         showWidgets();
                     } else {
-                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+                        getWindow().getDecorView().setSystemUiVisibility(View
+                                .SYSTEM_UI_FLAG_FULLSCREEN);
                         dismissWidgets();
 
                     }
