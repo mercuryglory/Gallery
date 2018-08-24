@@ -56,7 +56,6 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         Intent intent = getIntent();
         imageList = intent.getParcelableArrayListExtra("imageList");
         int currentPos = intent.getIntExtra("currentPos", 0);
-        ivSelect.setSelected(intent.getBooleanExtra("isSelect", false));
         selectedList = intent.getStringArrayListExtra("selectList");
 
         ImageGalleryAdapter adapter = new ImageGalleryAdapter(imageList);
@@ -128,10 +127,20 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         if (item.getItemId() == android.R.id.home) {
             finish();
         } else if (item.getItemId() == R.id.item_title) {
-            // TODO: 2018/8/22
-            Toast.makeText(this,"发送",Toast.LENGTH_SHORT).show();
+            completeSelected();
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void completeSelected() {
+        Intent intent = new Intent();
+        if (selectedList.isEmpty() && !imageList.isEmpty()) {
+            selectedList.add(currentPath);
+        }
+        intent.putStringArrayListExtra("pathList", selectedList);
+        setResult(RESULT_OK,intent);
+        finish();
     }
 
     private class ImageGalleryAdapter extends PagerAdapter{

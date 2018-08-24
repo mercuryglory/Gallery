@@ -20,10 +20,10 @@ import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +37,7 @@ import java.util.Map;
 public class SelectPhotoActivity extends AppCompatActivity implements View.OnClickListener, ImageAdapter.OnCheckListener {
 
     public static final String TAG = "SelectPhotoActivity";
+    public static final int REQUEST_GALLERY = 100;
 
     private CursorCallback mCursorLoader = new CursorCallback();
 
@@ -52,7 +53,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     private View viewBottom;
 
     private List<AlbumBucket> albumList;
-    private ArrayList<String> mPathList;
+    private ArrayList<String> mPathList = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,17 +91,35 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         if (item.getItemId() == android.R.id.home) {
             finish();
         } else if (item.getItemId() == R.id.item_title) {
-            completeSelected();
+            if (mPathList.isEmpty()) {
+                Toast.makeText(this, "您还没有选择图片", Toast.LENGTH_SHORT).show();
+            } else {
+                completeSelected(mPathList);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
     //finish the selection of images and return the paths
-    private void completeSelected() {
+    private void completeSelected(ArrayList<String> pathList) {
         Intent intent = new Intent();
-        intent.putStringArrayListExtra("pathList", mPathList);
+        intent.putStringArrayListExtra("pathList", pathList);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK) {
+            if (data == null) {
+                return;
+            }
+            ArrayList<String> pathList = data.getStringArrayListExtra("pathList");
+            if (pathList != null) {
+                completeSelected(pathList);
+            }
+        }
     }
 
     @Override
@@ -233,14 +252,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
                 for (Map.Entry<String, AlbumBucket> entry : albumMap.entrySet()) {
                     albumList.add(entry.getValue());
                 }
-                Collections.sort(albumList, new Comparator<AlbumBucket>() {
-                    @Override
-                    public int compare(AlbumBucket o1, AlbumBucket o2) {
-                        Log.i(TAG, "compare: " + o2.getCoverDate() + "," + o1.getCoverDate());
-//                        return (int) (o2.getImageList().get(0).getDate()-o1.getImageList().get(0).getDate());
-                        return (int) (o2.getCoverDate() - o1.getCoverDate());
-                    }
-                });
+                Collections.sort(albumList);
                 data.close();
             }
         }

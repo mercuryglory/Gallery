@@ -2,6 +2,7 @@ package com.mercury.gallery;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
  * @descript
  */
 
-public class AlbumBucket implements Parcelable{
+public class AlbumBucket implements Parcelable,Comparable<AlbumBucket>{
 
     private String name;
 
@@ -100,4 +101,13 @@ public class AlbumBucket implements Parcelable{
                 '}';
     }
 
+    @Override
+    public int compareTo(@NonNull AlbumBucket o) {
+        if (this.getCoverDate() < o.getCoverDate()) {
+            return 1;
+        } else if (this.getCoverDate() > o.getCoverDate()) {
+            return -1;
+        }
+        return 0;
+    }
 }

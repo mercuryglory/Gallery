@@ -70,28 +70,18 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 Intent intent = new Intent(mContext, ImageGalleryActivity.class);
                 intent.putParcelableArrayListExtra("imageList", (ArrayList<? extends Parcelable>) mData);
                 intent.putExtra("currentPos", position);
-                intent.putExtra("isSelect", image.isChecked());
                 intent.putStringArrayListExtra("selectList", pathList);
-                mContext.startActivity(intent);
+                ((SelectPhotoActivity)mContext).startActivityForResult(intent,SelectPhotoActivity.REQUEST_GALLERY);
 
             }
         });
 
     }
 
-    private OnItemClickListener mOnItemClickListener;
     private OnCheckListener mOnCheckListener;
-
-    public interface OnItemClickListener{
-        void onItemClick();
-    }
 
     public interface OnCheckListener{
         void onCheck(ArrayList<String> pathList);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
     }
 
     public void setOnCheckListener(OnCheckListener onCheckListener) {

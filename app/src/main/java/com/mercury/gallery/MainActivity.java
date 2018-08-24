@@ -15,10 +15,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final int EXTERNAL_STORAGE = 1;
     public static final String TAG = "MainActivity";
+
+    public static final int REQUEST_SELECT = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
                     .READ_EXTERNAL_STORAGE}, EXTERNAL_STORAGE);
         } else {
-            startActivity(new Intent(this, SelectPhotoActivity.class));
+            startActivityForResult(new Intent(this, SelectPhotoActivity.class), REQUEST_SELECT);
         }
     }
 
@@ -44,6 +48,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_SELECT) {
+            if (data != null) {
+                ArrayList<String> pathList = data.getStringArrayListExtra("pathList");
+                Log.i(TAG, "onActivityResult: " + pathList);
+            }
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
@@ -51,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == EXTERNAL_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startActivity(new Intent(this, SelectPhotoActivity.class));
+                startActivityForResult(new Intent(this, SelectPhotoActivity.class), REQUEST_SELECT);
             } else {
                 new AlertDialog.Builder(this)
                         .setMessage("您还没有授予读取外部存储的权限")
