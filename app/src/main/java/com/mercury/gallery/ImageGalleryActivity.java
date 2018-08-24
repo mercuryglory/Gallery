@@ -48,7 +48,8 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
         setContentView(R.layout.activity_image_gallery);
 
@@ -62,6 +63,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         toolBar.setLayoutParams(lp);
         toolBar.setPadding(toolBar.getPaddingLeft(), toolBar.getPaddingTop() + statusBarHeight,
                 toolBar.getPaddingRight(), toolBar.getPaddingBottom());
+
 
         ViewPager vpImage = findViewById(R.id.vp_image);
         TextView tvSelect = findViewById(R.id.tv_select);
@@ -88,6 +90,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         vpImage.addOnPageChangeListener(listener);
         vpImage.setCurrentItem(currentPos);
         listener.onPageSelected(currentPos);
+
 
     }
 
@@ -193,10 +196,12 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
                     if (systemUiVisibility != View.SYSTEM_UI_FLAG_VISIBLE) {
                         getWindow().getDecorView().setSystemUiVisibility(View
                                 .SYSTEM_UI_FLAG_VISIBLE);
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
                         showWidgets();
                     } else {
                         getWindow().getDecorView().setSystemUiVisibility(View
                                 .SYSTEM_UI_FLAG_FULLSCREEN);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
                         dismissWidgets();
 
                     }
