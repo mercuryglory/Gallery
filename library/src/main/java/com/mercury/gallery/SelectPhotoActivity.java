@@ -131,45 +131,40 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_folder_catalog:
+        if (v.getId() == R.id.tv_folder_catalog) {
+            if (mPopupWindow == null) {
+                mPopupWindow = new FolderPopupWindow(this);
+                mPopupWindow.setOutsideTouchable(true);
+                mPopupWindow.setData(albumList);
+            }
+            if (mPopupWindow.getAdapter() != null) {
+                mPopupWindow.getAdapter().setOnSelectListener(new AlbumAdapter.OnSelectListener() {
 
-                if (mPopupWindow == null) {
-                    mPopupWindow = new FolderPopupWindow(this);
-                    mPopupWindow.setOutsideTouchable(true);
-                    mPopupWindow.setData(albumList);
-                }
-                if (mPopupWindow.getAdapter() != null) {
-                    mPopupWindow.getAdapter().setOnSelectListener(new AlbumAdapter.OnSelectListener() {
-
-                        @Override
-                        public void onSelect(int position, AlbumBucket bucket) {
-                            mImageAdapter.setData(bucket.getImageList());
-                            tvFolderCatalog.setText(bucket.getName());
-                            mPopupWindow.dismiss();
-                        }
-                    });
-                }
-                mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
                     @Override
-                    public void onDismiss() {
-                        flContent.getForeground().setAlpha(0);
+                    public void onSelect(int position, AlbumBucket bucket) {
+                        mImageAdapter.setData(bucket.getImageList());
+                        tvFolderCatalog.setText(bucket.getName());
+                        mPopupWindow.dismiss();
                     }
                 });
-                if (mPopupWindow.isShowing()) {
-                    mPopupWindow.dismiss();
-                } else {
-//                    rlBottom.measure(0, 0);
-//                    int measuredHeight = rlBottom.getMeasuredHeight();
-//                    mPopupWindow.showAtLocation(viewBottom, Gravity.BOTTOM, 0, 0 );
-                    mPopupWindow.showAsDropDown(viewBottom, 0, 0);
-                    flContent.getForeground().setAlpha(127);
+            }
+            mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    flContent.getForeground().setAlpha(0);
                 }
-                Log.i(TAG, "onClick: " + mPopupWindow.isShowing());
-                break;
-
-            default:
-                break;
+            });
+            if (mPopupWindow.isShowing()) {
+                mPopupWindow.dismiss();
+            } else {
+                //                    rlBottom.measure(0, 0);
+                //                    int measuredHeight = rlBottom.getMeasuredHeight();
+                //                    mPopupWindow.showAtLocation(viewBottom, Gravity.BOTTOM, 0,
+                // 0 );
+                mPopupWindow.showAsDropDown(viewBottom, 0, 0);
+                flContent.getForeground().setAlpha(127);
+            }
+            Log.i(TAG, "onClick: " + mPopupWindow.isShowing());
 
         }
     }

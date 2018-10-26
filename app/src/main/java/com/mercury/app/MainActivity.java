@@ -1,4 +1,4 @@
-package com.mercury.gallery;
+package com.mercury.app;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.mercury.gallery.SelectPhotoActivity;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.i(TAG, "maxMemory=" + Runtime.getRuntime().maxMemory() / 1024 / 1024);
     }
-
 
     //选取相册
     public void photo(View view) {
@@ -83,6 +84,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 }
