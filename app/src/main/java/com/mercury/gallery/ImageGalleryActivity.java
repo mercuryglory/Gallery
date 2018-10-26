@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
@@ -48,24 +49,23 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
 
         setContentView(R.layout.activity_image_gallery);
 
-        int statusBarHeight = ScreenUtils.getStatusBarHeight(this);
-
         toolBar = findViewById(R.id.toolBar);
-        toolBar.measure(0, 0);
-        int height = toolBar.getMeasuredHeight();
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams
-                .MATCH_PARENT, height + statusBarHeight);
-        toolBar.setLayoutParams(lp);
-        toolBar.setPadding(toolBar.getPaddingLeft(), toolBar.getPaddingTop() + statusBarHeight,
-                toolBar.getPaddingRight(), toolBar.getPaddingBottom());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int statusBarHeight = ScreenUtils.getStatusBarHeight(this);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            toolBar.measure(0, 0);
+            int height = toolBar.getMeasuredHeight();
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams
+                    .MATCH_PARENT, height + statusBarHeight);
+            toolBar.setLayoutParams(lp);
+            toolBar.setPadding(toolBar.getPaddingLeft(), toolBar.getPaddingTop() + statusBarHeight,
+                    toolBar.getPaddingRight(), toolBar.getPaddingBottom());
+        }
 
-
-        ViewPager vpImage = findViewById(R.id.vp_image);
+        CustomViewPager vpImage = findViewById(R.id.vp_image);
         TextView tvSelect = findViewById(R.id.tv_select);
         ivSelect = findViewById(R.id.iv_select);
         rlBottom = findViewById(R.id.rl_bottom);
@@ -90,7 +90,6 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         vpImage.addOnPageChangeListener(listener);
         vpImage.setCurrentItem(currentPos);
         listener.onPageSelected(currentPos);
-
 
     }
 
@@ -180,7 +179,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
-            ImageView imageView = new ImageView(container.getContext());
+            ScaleImageView imageView = new ScaleImageView(container.getContext());
             imageView.setBackground(new ColorDrawable(Color.BLACK));
             Image image = mList.get(position);
             if (!TextUtils.isEmpty(image.getPath())) {
@@ -196,19 +195,17 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
                     if (systemUiVisibility != View.SYSTEM_UI_FLAG_VISIBLE) {
                         getWindow().getDecorView().setSystemUiVisibility(View
                                 .SYSTEM_UI_FLAG_VISIBLE);
-                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
                         showWidgets();
                     } else {
                         getWindow().getDecorView().setSystemUiVisibility(View
                                 .SYSTEM_UI_FLAG_FULLSCREEN);
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
                         dismissWidgets();
 
                     }
                 }
             });
 
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+//            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             container.addView(imageView);
             return imageView;
 
@@ -217,12 +214,6 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
-            //            ImageView view = (ImageView) object;
-            //            container.removeView(view);
-            //            view.setDrawingCacheEnabled(true);
-            //            Bitmap drawingCache = view.getDrawingCache();
-            //            view.setDrawingCacheEnabled(false);
-            //            drawingCache.recycle();
         }
 
         @Override

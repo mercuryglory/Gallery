@@ -28,7 +28,7 @@ public class GalleryImageLoader implements ImageLoader {
 
     private Executor mExecutor;
 
-    private static final Handler mainHandler=new Handler(Looper.getMainLooper());
+    private static final Handler mainHandler = new Handler(Looper.getMainLooper());
 
     public static GalleryImageLoader getInstance() {
         if (sInstance == null) {

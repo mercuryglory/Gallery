@@ -63,7 +63,9 @@ public class FolderPopupWindow extends PopupWindow {
         if (mAdapter == null) {
             throw new IllegalStateException("The adapter has not been initialized");
         }
-        mAdapter.setData(list);
+        if (list != null) {
+            mAdapter.setData(list);
+        }
     }
 
     public AlbumAdapter getAdapter() {
