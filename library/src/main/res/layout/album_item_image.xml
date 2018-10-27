@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="相册图片"
-        android:scaleType="centerCrop"
-        tools:src="@mipmap/ic_launcher" />
+        android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/cb_select"
