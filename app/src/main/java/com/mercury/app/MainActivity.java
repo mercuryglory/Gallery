@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.mercury.gallery.Album;
-import com.mercury.gallery.SelectPhotoActivity;
 
 import java.util.ArrayList;
 
@@ -69,7 +68,11 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == EXTERNAL_STORAGE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startActivityForResult(new Intent(this, SelectPhotoActivity.class), REQUEST_SELECT);
+                Album album = new Album.Builder().with(this)
+                        .maxCount(8)
+                        .requestCode(REQUEST_SELECT)
+                        .build();
+                album.startAlbum();
             } else {
                 new AlertDialog.Builder(this)
                         .setMessage("您还没有授予读取外部存储的权限")
