@@ -21,6 +21,6 @@
         android:paddingLeft="20dp"
         android:paddingRight="5dp"
         android:paddingTop="5dp"
-        android:src="@drawable/item_choose" />
+        android:src="@drawable/album_item_choose" />
 
 </com.mercury.gallery.PhotoLayout >

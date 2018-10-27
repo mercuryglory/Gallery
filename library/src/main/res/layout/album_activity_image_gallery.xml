@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <com.mercury.gallery.CustomViewPager
+    <com.mercury.gallery.FixViewPager
         android:id="@+id/vp_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -13,7 +13,7 @@
         android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="18dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/album_colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
@@ -35,7 +35,7 @@
             android:layout_marginRight="10dp"
             android:padding="10dp"
             android:text="选择"
-            android:textColor="@color/white" />
+            android:textColor="@color/album_white" />
 
         <ImageView
             android:id="@+id/iv_select"
@@ -44,7 +44,7 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/tv_select"
             android:padding="5dp"
-            android:src="@drawable/item_choose" />
+            android:src="@drawable/album_item_choose" />
     </RelativeLayout >
 
 </FrameLayout >

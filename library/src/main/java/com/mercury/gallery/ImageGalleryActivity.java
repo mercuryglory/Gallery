@@ -52,7 +52,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_image_gallery);
+        setContentView(R.layout.album_activity_image_gallery);
 
         maxCount = getIntent().getIntExtra("maxCount", 0);
         toolBar = findViewById(R.id.toolBar);
@@ -68,7 +68,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
                     toolBar.getPaddingRight(), toolBar.getPaddingBottom());
         }
 
-        CustomViewPager vpImage = findViewById(R.id.vp_image);
+        FixViewPager vpImage = findViewById(R.id.vp_image);
         TextView tvSelect = findViewById(R.id.tv_select);
         ivSelect = findViewById(R.id.iv_select);
         rlBottom = findViewById(R.id.rl_bottom);
@@ -136,7 +136,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_send, menu);
+        getMenuInflater().inflate(R.menu.album_menu_send, menu);
         menuTitle = menu.findItem(R.id.item_title);
         updateSelectSize();
         return super.onCreateOptionsMenu(menu);

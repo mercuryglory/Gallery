@@ -59,7 +59,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_select_photo);
+        setContentView(R.layout.album_activity_select_photo);
         getLoaderManager().initLoader(0, null, mCursorLoader);
 
         maxCount = getIntent().getIntExtra("maxCount", 0);
@@ -127,7 +127,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_send, menu);
+        getMenuInflater().inflate(R.menu.album_menu_send, menu);
         menuTitle = menu.findItem(R.id.item_title);
         return super.onCreateOptionsMenu(menu);
     }

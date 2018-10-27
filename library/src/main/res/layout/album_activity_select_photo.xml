@@ -10,7 +10,7 @@
         android:id="@+id/toolBar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="@color/colorPrimary"
+        android:background="@color/album_colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
@@ -39,7 +39,7 @@
         android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary" >
+        android:background="@color/album_colorPrimary" >
 
         <TextView
             android:id="@+id/tv_folder_catalog"
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:text="全部图片"
-            android:textColor="@color/white"
+            android:textColor="@color/album_white"
             android:textSize="16sp" />
 
     </RelativeLayout >

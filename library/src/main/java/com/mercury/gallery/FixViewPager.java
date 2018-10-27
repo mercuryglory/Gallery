@@ -14,17 +14,17 @@ import android.view.MotionEvent;
  * @descript
  */
 
-public class CustomViewPager extends ViewPager {
+public class FixViewPager extends ViewPager {
 
     private static final String TAG = "CustomViewPager";
 
     private static final boolean DEBUG = false;
 
-    public CustomViewPager(@NonNull Context context) {
+    public FixViewPager(@NonNull Context context) {
         super(context);
     }
 
-    public CustomViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public FixViewPager(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -39,8 +39,7 @@ public class CustomViewPager extends ViewPager {
             if (DEBUG) {
                 Log.i(TAG, "mActivePointerId: " + ev.getPointerId(0));
             }
-        }
-        return result;
+        }        return result;
     }
 
     @Override
