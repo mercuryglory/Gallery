@@ -66,6 +66,24 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ImageGalleryActivity.setOnCheckedChangeListener(new ImageGalleryActivity.OnCheckedChangeListener() {
+
+                    @Override
+                    public void onCheckedChange(boolean isChecked, int position) {
+                        Image changeImage = mData.get(position);
+                        changeImage.setChecked(isChecked);
+                        //真正的局部刷新
+                        notifyItemChanged(position,"part");
+                        if (changeImage.isChecked()) {
+                            pathList.add(changeImage.getPath());
+                        } else {
+                            pathList.remove(changeImage.getPath());
+                        }
+                        if (mOnCheckListener != null) {
+                            mOnCheckListener.onCheck(pathList);
+                        }
+                    }
+                });
                 Intent intent = new Intent(mContext, ImageGalleryActivity.class);
                 ImageGalleryActivity.imageList = (ArrayList<Image>) mData;
                 intent.putExtra("currentPos", position);

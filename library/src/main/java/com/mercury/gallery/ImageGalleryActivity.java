@@ -43,6 +43,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     public static ArrayList<Image>  imageList;
     private       ArrayList<String> selectedList;
     private       String            currentPath;
+    private int currentPosition;
 
     public static final String TAG = "ImageGalleryActivity";
 
@@ -96,15 +97,21 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         if (!ivSelect.isSelected()) {
-            if (selectedList.size() == 6) {
+            if (selectedList.size() >= 6) {
                 Toast.makeText(this, "你最多只能选择6张照片", Toast.LENGTH_SHORT).show();
             } else {
-                ivSelect.setSelected(!ivSelect.isSelected());
+                ivSelect.setSelected(true);
                 selectedList.add(currentPath);
+                if (mOnCheckedChangeListener != null) {
+                    mOnCheckedChangeListener.onCheckedChange(true, currentPosition);
+                }
             }
         } else {
             ivSelect.setSelected(!ivSelect.isSelected());
             selectedList.remove(currentPath);
+            if (mOnCheckedChangeListener != null) {
+                mOnCheckedChangeListener.onCheckedChange(false, currentPosition);
+            }
         }
         updateSelectSize();
 
@@ -115,6 +122,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
 
         @Override
         public void onPageSelected(int position) {
+            currentPosition = position;
             currentPath = imageList.get(position).getPath();
             if (getSupportActionBar() != null) {
                 getSupportActionBar().setTitle(position + 1 + "/" + imageList.size());
@@ -250,9 +258,20 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
         }).start();
     }
 
+    private static OnCheckedChangeListener mOnCheckedChangeListener;
+
+    public interface OnCheckedChangeListener{
+        void onCheckedChange(boolean isChecked, int position);
+    }
+
+    public static void setOnCheckedChangeListener(OnCheckedChangeListener onCheckedChangeListener) {
+        mOnCheckedChangeListener = onCheckedChangeListener;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mOnCheckedChangeListener = null;
         ImageLoaderFactory.createGalleryLoader().clearCache();
     }
 }
