@@ -18,6 +18,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     public  LayoutInflater mInflater;
     public  Context        mContext;
     private ArrayList<String> pathList;
+    private int maxCount;
+
+    public ImageAdapter(Context context, int maxCount) {
+        this(context);
+        this.maxCount = maxCount;
+    }
 
     public ImageAdapter(Context context) {
         mContext = context;
@@ -45,8 +51,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         holder.cbSelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!image.isChecked() && pathList.size() >= 6) {
-                    Toast.makeText(mContext, "你最多只能选择6张照片", Toast.LENGTH_SHORT).show();
+                if (!image.isChecked() && pathList.size() >= maxCount) {
+                    Toast.makeText(mContext, "你最多只能选择"+maxCount+"张照片", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 image.setChecked(!v.isSelected());
@@ -87,6 +93,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 Intent intent = new Intent(mContext, ImageGalleryActivity.class);
                 ImageGalleryActivity.imageList = (ArrayList<Image>) mData;
                 intent.putExtra("currentPos", position);
+                intent.putExtra("maxCount", maxCount);
                 intent.putStringArrayListExtra("selectList", pathList);
                 ((SelectPhotoActivity)mContext).startActivityForResult(intent,SelectPhotoActivity.REQUEST_GALLERY);
 

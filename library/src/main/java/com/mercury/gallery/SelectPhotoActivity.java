@@ -54,13 +54,16 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
 
     private List<AlbumBucket> albumList;
     private ArrayList<String> mPathList = new ArrayList<>();
+    private int maxCount;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_photo);
         getLoaderManager().initLoader(0, null, mCursorLoader);
-        mImageAdapter = new ImageAdapter(this);
+
+        maxCount = getIntent().getIntExtra("maxCount", 0);
+        mImageAdapter = new ImageAdapter(this, maxCount);
 
         viewBottom = findViewById(R.id.view_bottom);
         rlBottom = findViewById(R.id.rl_bottom);
@@ -175,7 +178,7 @@ public class SelectPhotoActivity extends AppCompatActivity implements View.OnCli
         if (pathList.isEmpty()) {
             menuTitle.setTitle("发送");
         } else {
-            menuTitle.setTitle("发送(" + pathList.size() + "/6)");
+            menuTitle.setTitle("发送(" + pathList.size() + "/" + maxCount + ")");
         }
     }
 

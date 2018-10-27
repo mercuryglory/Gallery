@@ -44,6 +44,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     private       ArrayList<String> selectedList;
     private       String            currentPath;
     private int currentPosition;
+    private int maxCount;
 
     public static final String TAG = "ImageGalleryActivity";
 
@@ -53,6 +54,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
 
         setContentView(R.layout.activity_image_gallery);
 
+        maxCount = getIntent().getIntExtra("maxCount", 0);
         toolBar = findViewById(R.id.toolBar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             int statusBarHeight = ScreenUtils.getStatusBarHeight(this);
@@ -97,8 +99,8 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         if (!ivSelect.isSelected()) {
-            if (selectedList.size() >= 6) {
-                Toast.makeText(this, "你最多只能选择6张照片", Toast.LENGTH_SHORT).show();
+            if (selectedList.size() >= maxCount) {
+                Toast.makeText(this, "你最多只能选择"+maxCount+"张照片", Toast.LENGTH_SHORT).show();
             } else {
                 ivSelect.setSelected(true);
                 selectedList.add(currentPath);
@@ -145,7 +147,7 @@ public class ImageGalleryActivity extends AppCompatActivity implements View.OnCl
             if (selectedList.isEmpty()) {
                 menuTitle.setTitle("发送");
             } else {
-                menuTitle.setTitle("发送(" + selectedList.size() + "/6)");
+                menuTitle.setTitle("发送(" + selectedList.size() + "/" + maxCount + ")");
             }
         }
     }

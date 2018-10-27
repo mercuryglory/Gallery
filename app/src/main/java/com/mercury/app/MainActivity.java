@@ -15,14 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.mercury.gallery.Album;
 import com.mercury.gallery.SelectPhotoActivity;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int EXTERNAL_STORAGE = 1;
-    public static final String TAG = "MainActivity";
+    public static final int    EXTERNAL_STORAGE = 1;
+    public static final String TAG              = "MainActivity";
 
     public static final int REQUEST_SELECT = 101;
 
@@ -40,7 +41,11 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
                     .READ_EXTERNAL_STORAGE}, EXTERNAL_STORAGE);
         } else {
-            startActivityForResult(new Intent(this, SelectPhotoActivity.class), REQUEST_SELECT);
+            Album album = new Album.Builder().with(this)
+                    .maxCount(8)
+                    .requestCode(REQUEST_SELECT)
+                    .build();
+            album.startAlbum();
         }
     }
 
@@ -53,10 +58,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_SELECT) {
-            if (data != null) {
-                ArrayList<String> pathList = data.getStringArrayListExtra("pathList");
-                Log.i(TAG, "onActivityResult: " + pathList);
-            }
+            ArrayList<String> pathList = Album.parseResult(data);
+            Log.i(TAG, "onActivityResult: " + pathList);
         }
     }
 
@@ -73,7 +76,8 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton("去设置页面", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Intent intent = new Intent(Settings
+                                        .ACTION_APPLICATION_DETAILS_SETTINGS);
                                 intent.setData(Uri.fromParts("package", getPackageName(), null));
                                 startActivity(intent);
 
