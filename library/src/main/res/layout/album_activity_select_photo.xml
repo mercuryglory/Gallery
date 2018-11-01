@@ -45,9 +45,13 @@
             android:id="@+id/tv_folder_catalog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="60dp"
             android:text="全部图片"
             android:textColor="@color/album_white"
+            android:drawableRight="@drawable/album_triangle_normal"
             android:textSize="16sp" />
 
     </RelativeLayout >
